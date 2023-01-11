@@ -5,39 +5,69 @@
   <title>Speech Synthesis</title>
   <link href='https://fonts.googleapis.com/css?family=Pacifico' rel='stylesheet' type='text/css'>
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="script.js">
 </head>
 <body>
 
-    <div class="voiceinator">
+ <!-- add a text box for inputting text -->
+<textarea id="input"></textarea>
 
-      <h1>The Voiceinator 5000</h1>
+<!-- add a dropdown for selecting the voice -->
+<select id="voice-select"></select>
 
-      <select name="voice" id="voices">
-        <option value="">Select A Voice</option>
-      </select>
-
-      <label for="rate">Rate:</label>
-      <input name="rate" type="range" min="0" max="3" value="1" step="0.1">
-
-      <label for="pitch">Pitch:</label>
-
-      <input name="pitch" type="range" min="0" max="2" step="0.1">
-      <textarea name="text">Hello! I love JavaScript 👍</textarea>
-      <button id="stop">Stop!</button>
-      <button id="speak">Speak</button>
-
-    </div>
+<!-- add buttons for controlling speech -->
+<button id="start">Start</button>
+<button id="stop">Stop</button>
 
 <script>
-  const msg = new SpeechSynthesisUtterance();
-  let voices = [];
-  const voicesDropdown = document.querySelector('[name="voice"]');
-  const options = document.querySelectorAll('[type="range"], [name="text"]');
-  const speakButton = document.querySelector('#speak');
-  const stopButton = document.querySelector('#stop');
+  // get references to the elements on the page
+  var input = document.getElementById('input');
+  var voiceSelect = document.getElementById('voice-select');
+  var startButton = document.getElementById('start');
+  var stopButton = document.getElementById('stop');
+  
+  // check if the browser supports the Web Speech API
+  if ('speechSynthesis' in window) {
+    // get the available voices
+    var voices = speechSynthesis.getVoices();
 
-  //Your code goes here
+    // add the voices to the dropdown
+    for (var i = 0; i < voices.length; i++) {
+      var option = document.createElement('option');
+      option.textContent = voices[i].name;
+      option.setAttribute('data-lang', voices[i].lang);
+      option.setAttribute('data-name', voices[i].name);
+      voiceSelect.appendChild(option);
+    }
+  }
+
+  // handle the start button click
+  startButton.addEventListener('click', function() {
+    // get the selected voice
+    var selectedVoice = voiceSelect.selectedOptions[0].getAttribute('data-name');
+
+    // create a new speech synthesis utterance
+    var utterance = new SpeechSynthesisUtterance(input.value);
+
+    // set the voice
+    for (var i = 0; i < voices.length; i++) {
+      if (voices[i].name === selectedVoice) {
+        utterance.voice = voices[i];
+        break;
+      }
+    }
+
+    // start speaking
+    speechSynthesis.speak(utterance);
+  });
+
+  // handle the stop button click
+  stopButton.addEventListener('click', function() {
+    // stop speaking
+    speechSynthesis.cancel();
+  });
 </script>
+
 
 </body>
 </html>
