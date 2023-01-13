@@ -5,14 +5,67 @@
   <title>Speech Synthesis</title>
   <link href='https://fonts.googleapis.com/css?family=Pacifico' rel='stylesheet' type='text/css'>
   <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="script.js">
 </head>
 <body>
-
+<!-- HTML for the text input, rate input, voice selection, and buttons -->
 <textarea id="text-input"></textarea>
+<input type="number" id="rate-input" min="0.1" max="10" step="0.1" value="1">
 <select id="voice-select"></select>
 <button id="start-button">Start</button>
 <button id="stop-button">Stop</button>
+
+<script>
+  // Get references to the text input, rate input, voice select, and buttons
+  var textInput = document.getElementById("text-input");
+  var rateInput = document.getElementById("rate-input");
+  var voiceSelect = document.getElementById("voice-select");
+  var startButton = document.getElementById("start-button");
+  var stopButton = document.getElementById("stop-button");
+
+  // Check if the browser supports the Web Speech API
+  if ('speechSynthesis' in window) {
+    // Get the available voices
+    var voices = speechSynthesis.getVoices();
+
+    // Add the voices to the voice select
+    for (var i = 0; i < voices.length; i++) {
+      var option = document.createElement("option");
+      option.value = voices[i].name;
+      option.innerHTML = voices[i].name;
+      voiceSelect.appendChild(option);
+    }
+  } else {
+    // If the browser doesn't support the Web Speech API, display an error message
+    textInput.innerHTML = "Your browser does not support the Web Speech API.";
+  }
+
+  // Check if the rate input exists before each start button click
+  beforeEach(function() {
+    if (!rateInput) {
+      alert("Rate input not found!");
+      return;
+    }
+  });
+
+  // Handle the start button click
+  startButton.addEventListener("click", function() {
+    // Create a new SpeechSynthesisUtterance for the text input
+    var utterance = new SpeechSynthesisUtterance(textInput.value);
+
+    // Set the voice and rate to the selected voice and rate input
+    utterance.voice = voices.filter(function(voice) { return voice.name == voiceSelect.value; })[0];
+    utterance.rate = rateInput.value;
+
+    // Speak the utterance
+    speechSynthesis.speak(utterance);
+  });
+
+  // Handle the stop button click
+  stopButton.addEventListener("click", function() {
+    // Stop the speech synthesis
+    speechSynthesis.cancel();
+  });
+</script>
 
 </body>
 </html>
