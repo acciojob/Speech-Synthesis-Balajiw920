@@ -9,65 +9,10 @@
 </head>
 <body>
 
- <!-- add a text box for inputting text -->
-<textarea id="input"></textarea>
-
-<!-- add a dropdown for selecting the voice -->
+<textarea id="text-input"></textarea>
 <select id="voice-select"></select>
-
-<!-- add buttons for controlling speech -->
-<button id="start">Start</button>
-<button id="stop">Stop</button>
-
-<script>
-  // get references to the elements on the page
-  var input = document.getElementById('input');
-  var voiceSelect = document.getElementById('voice-select');
-  var startButton = document.getElementById('start');
-  var stopButton = document.getElementById('stop');
-  
-  // check if the browser supports the Web Speech API
-  if ('speechSynthesis' in window) {
-    // get the available voices
-    var voices = speechSynthesis.getVoices();
-
-    // add the voices to the dropdown
-    for (var i = 0; i < voices.length; i++) {
-      var option = document.createElement('option');
-      option.textContent = voices[i].name;
-      option.setAttribute('data-lang', voices[i].lang);
-      option.setAttribute('data-name', voices[i].name);
-      voiceSelect.appendChild(option);
-    }
-  }
-
-  // handle the start button click
-  startButton.addEventListener('click', function() {
-    // get the selected voice
-    var selectedVoice = voiceSelect.selectedOptions[0].getAttribute('data-name');
-
-    // create a new speech synthesis utterance
-    var utterance = new SpeechSynthesisUtterance(input.value);
-
-    // set the voice
-    for (var i = 0; i < voices.length; i++) {
-      if (voices[i].name === selectedVoice) {
-        utterance.voice = voices[i];
-        break;
-      }
-    }
-
-    // start speaking
-    speechSynthesis.speak(utterance);
-  });
-
-  // handle the stop button click
-  stopButton.addEventListener('click', function() {
-    // stop speaking
-    speechSynthesis.cancel();
-  });
-</script>
-
+<button id="start-button">Start</button>
+<button id="stop-button">Stop</button>
 
 </body>
 </html>
